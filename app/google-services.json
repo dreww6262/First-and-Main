@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "976916263460",
+    "firebase_url": "https://first-and-main-williamson.firebaseio.com",
+    "project_id": "first-and-main-williamson",
+    "storage_bucket": "first-and-main-williamson.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976916263460:android:b41790ab15a85e9cf31eb1",
+        "android_client_info": {
+          "package_name": "com.example.firstandmainwilliamson"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "976916263460-58umpli1oc3gd7el5smm1lcrj4n0tlb6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.firstandmainwilliamson",
+            "certificate_hash": "ff23ab6da27c389f6fa9189fe3d638b2ea9b1d72"
+          }
+        },
+        {
+          "client_id": "976916263460-n6vmsrekeaabg470bk960e1b6o5cb3hf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5IP2GGN7jRrlYNK6b8n99uDO_adyP0uA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "976916263460-n6vmsrekeaabg470bk960e1b6o5cb3hf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

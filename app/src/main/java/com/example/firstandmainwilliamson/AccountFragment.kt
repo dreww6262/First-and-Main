@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.module.AppGlideModule
-import kotlinx.android.synthetic.main.fragment_account.*
 
 
 /**
@@ -32,14 +32,44 @@ class AccountFragment : Fragment() {
                     "SRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVH33scGBZjC30S7EYewNF5iKKwhonf2ThqWWOBkLKnojuqYeU1KwPvsAK7Tx5ND4WE/image-asset.jpeg")
             .override(512, 512)
             .into(imageView)
-
+        val model: MyViewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
         val usernameInput = v.findViewById<TextView>(R.id.usernameInput)
         val passwordInput = v.findViewById<TextView>(R.id.passwordInput)
         val button: Button = v.findViewById(R.id.submitButton)
+
+        var passwordEntered = false
+
+        model.getUser().observe(viewLifecycleOwner, Observer { it ->
+            if (it != null) {
+                Navigation.findNavController(v).navigate(R.id.accountDetails)
+            }
+            if (it == null && passwordEntered) {
+                val toast: Toast = Toast.makeText(context, "Your username and or password is incorrect", Toast.LENGTH_LONG)
+                toast.show()
+            }
+        })
+
         button.setOnClickListener {
-            Navigation.findNavController(v).navigate(R.id.accountDetails)
-            usernameInput.text = ""
-            passwordInput.text = ""
+            passwordEntered = true
+            when {
+                usernameInput.text.isNullOrEmpty() -> {
+                    val toast: Toast = Toast.makeText(context, "Enter a username!", Toast.LENGTH_SHORT)
+                    toast.show()
+                }
+                passwordInput.text.isNullOrEmpty() -> {
+                    val toast: Toast = Toast.makeText(context, "Enter a password!", Toast.LENGTH_SHORT)
+                    toast.show()
+                }
+                else -> {
+                    val success = model.startSignIn(usernameInput.text.toString(), passwordInput.text.toString())
+                    usernameInput.text = ""
+                    passwordInput.text = ""
+                }
+            }
+        }
+
+        v.findViewById<TextView>(R.id.createAccountText).setOnClickListener{
+            Navigation.findNavController(v).navigate(R.id.createAccountFragment)
         }
 
         return v

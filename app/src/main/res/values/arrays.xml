@@ -2,9 +2,8 @@
 <resources>
     <string-array name="filter_options">
         <item>Filter by Establishment</item>
-        <item>Food</item>
-        <item>Clothes</item>
-        <item>Jewelry</item>
-        <item>Recreation</item>
+        <item>Dining &amp; Bevs</item>
+        <item>Shops &amp; Services</item>
+        <item>Entertainment</item>
     </string-array>
 </resources>

@@ -6,8 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 /**
  * A simple [Fragment] subclass.
@@ -21,8 +25,15 @@ class HomeFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_home, container, false)
         val dealListView = v.findViewById<RecyclerView>(R.id.dealRecyclerView)
+        val model: MyViewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
+        //val model: MyViewModel by viewModels()
+        //val deals: List<DealItem> = generateDeals()
 
-        val deals: List<DealItem> = generateDeals()
+        var deals: List<PromoItem> = listOf()
+        model.getPromos().observe(viewLifecycleOwner, Observer { it ->
+            deals = it
+            dealListView.adapter = StoreListAdapter(deals)
+        })
         dealListView.adapter = StoreListAdapter(deals)
         dealListView.layoutManager = LinearLayoutManager(activity)
 
@@ -30,17 +41,8 @@ class HomeFragment : Fragment() {
         return v
     }
 
-    private fun generateDeals(): List<DealItem> {
-        val dealList = mutableListOf<DealItem>()
-        dealList.add(DealItem("BOGO Burrito at Chipotle Today Only!", "Chipotle"))
-        dealList.add(DealItem("50% OFF SALE AT JOS. A BANK!!", "Joseph A Bank"))
-        dealList.add(DealItem("FREE popcorn at Paragon with purchase of movie ticket", "Paragon"))
-        dealList.add(DealItem("Kareoke tonight at McClain's", "McClain's"))
 
-        return dealList
-    }
-
-    inner class StoreListAdapter(var deals: List<DealItem>) :
+    inner class StoreListAdapter(var deals: List<PromoItem>) :
         RecyclerView.Adapter<StoreListAdapter.StoreViewHolder>() {
         /*
         private var stores = emptyList<StoreItem>()
@@ -74,7 +76,7 @@ class HomeFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreViewHolder {
-            val v = LayoutInflater.from(parent.context).inflate(R.layout.card_view, parent, false)
+            val v = LayoutInflater.from(parent.context).inflate(R.layout.promo_card_view, parent, false)
             return StoreViewHolder(v)
         }
 
@@ -83,8 +85,13 @@ class HomeFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: StoreViewHolder, position: Int) {
-            holder.view.findViewById<TextView>(R.id.storeName).text = deals[position].deal
-            holder.view.findViewById<TextView>(R.id.description).text = deals[position].store
+            holder.view.findViewById<TextView>(R.id.promoName).text = deals[position].name
+            holder.view.findViewById<TextView>(R.id.storeNameOfPromo).text = deals[position].store
+            holder.view.findViewById<TextView>(R.id.expDate).text = deals[position].expiration
+            Glide.with(this@HomeFragment)
+                .load(deals[position].pictureUrl)
+                .apply(RequestOptions().override(192, 192))
+                .into(holder.view.findViewById(R.id.promoPoster))
             holder.itemView.setOnClickListener() {
                 // interact with item
             }

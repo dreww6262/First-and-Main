@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.firstandmainwilliamson
 
 import android.os.Bundle
@@ -9,16 +11,21 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 
 /**
  * A simple [Fragment] subclass.
  */
-class AccountFragment : Fragment() {
+class AccountFragment() : Fragment(), CoroutineScope {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,20 +44,8 @@ class AccountFragment : Fragment() {
         val passwordInput = v.findViewById<TextView>(R.id.passwordInput)
         val button: Button = v.findViewById(R.id.submitButton)
 
-        var passwordEntered = false
-
-        model.getUser().observe(viewLifecycleOwner, Observer { it ->
-            if (it != null) {
-                Navigation.findNavController(v).navigate(R.id.accountDetails)
-            }
-            if (it == null && passwordEntered) {
-                val toast: Toast = Toast.makeText(context, "Your username and or password is incorrect", Toast.LENGTH_LONG)
-                toast.show()
-            }
-        })
 
         button.setOnClickListener {
-            passwordEntered = true
             when {
                 usernameInput.text.isNullOrEmpty() -> {
                     val toast: Toast = Toast.makeText(context, "Enter a username!", Toast.LENGTH_SHORT)
@@ -61,9 +56,19 @@ class AccountFragment : Fragment() {
                     toast.show()
                 }
                 else -> {
-                    val success = model.startSignIn(usernameInput.text.toString(), passwordInput.text.toString())
-                    usernameInput.text = ""
-                    passwordInput.text = ""
+                    launch {
+                        val success = model.startSignIn(usernameInput.text.toString(), passwordInput.text.toString())
+                        if (success) {
+                            usernameInput.text = ""
+                            passwordInput.text = ""
+                            Navigation.findNavController(v).navigate(R.id.accountDetails)
+                        }
+                        else {
+                            passwordInput.text = ""
+                            val toast: Toast = Toast.makeText(context, "Your username and or password is incorrect", Toast.LENGTH_LONG)
+                            toast.show()
+                        }
+                    }
                 }
             }
         }

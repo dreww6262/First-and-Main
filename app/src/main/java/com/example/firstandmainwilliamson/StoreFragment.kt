@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.firstandmainwilliamson
 
 import android.os.Bundle
@@ -8,17 +10,22 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A simple [Fragment] subclass.
  */
-class StoreFragment : Fragment() {
+class StoreFragment : Fragment(), CoroutineScope {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
     private var filtered = false
 
     override fun onCreateView(
@@ -27,17 +34,23 @@ class StoreFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_store, container, false)
 
-        val model: MyViewModel = ViewModelProviders.of(this).get<MyViewModel>(MyViewModel::class.java)
+        val model: MyViewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
         //val model: MyViewModel by viewModels()
-        val recyclerView:RecyclerView = v.findViewById<RecyclerView>(R.id.storeRecyclerView)
+        val recyclerView:RecyclerView = v.findViewById(R.id.storeRecyclerView)
 
         var storeList: List<StoreItem> = listOf()
-        model.getStores().observe(viewLifecycleOwner, Observer { it->
+        launch {
+            storeList = model.getStores()
+            recyclerView.adapter = MyAdapter(storeList)
+        }
+            /*.observe(viewLifecycleOwner, Observer { it->
             if (!filtered) {
                 storeList = it
                 (recyclerView.adapter as MyAdapter).updateList(storeList)
             }
         })
+
+             */
 
         recyclerView.layoutManager = LinearLayoutManager(this@StoreFragment.context)
         recyclerView.adapter = MyAdapter(storeList)
@@ -47,11 +60,8 @@ class StoreFragment : Fragment() {
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 //not an option
             }
-
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val selectedItem: String = p0?.getItemAtPosition(p2)?.toString()!!
-                val storeList = model.getStores().value ?: listOf()
-                when (selectedItem) {
+            fun filterList(selection: String, storeList: List<StoreItem>) {
+                when (selection) {
                     "Filter by Establishment" -> {
                         (recyclerView.adapter as MyAdapter).updateList(storeList)
                         filtered = false
@@ -72,6 +82,11 @@ class StoreFragment : Fragment() {
                         (recyclerView.adapter as MyAdapter).updateList(filteredStoreList)
                     }
                 }
+            }
+
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                val selectedItem: String = p0?.getItemAtPosition(p2)?.toString()!!
+                filterList(selectedItem, storeList)
             }
 
         }

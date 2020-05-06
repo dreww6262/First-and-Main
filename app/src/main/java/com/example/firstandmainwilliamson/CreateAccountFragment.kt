@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.firstandmainwilliamson
 
 import android.os.Bundle
@@ -12,11 +14,17 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A simple [Fragment] subclass.
  */
-class CreateAccountFragment : Fragment() {
+class CreateAccountFragment() : Fragment(), CoroutineScope {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +54,7 @@ class CreateAccountFragment : Fragment() {
                 toast.show()
             }
             else {
-                model.createAccount(usernameInput.text.toString(), passwordInput.text.toString())
+                launch {model.createAccount(usernameInput.text.toString(), passwordInput.text.toString())}
                 Navigation.findNavController(v).navigate(R.id.accountFragment)
             }
         }

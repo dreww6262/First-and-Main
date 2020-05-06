@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.firstandmainwilliamson
 
 import android.os.Bundle

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.firstandmainwilliamson
 
 import android.os.Bundle
@@ -6,17 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A simple [Fragment] subclass.
  */
-class HomeFragment : Fragment() {
+class HomeFragment() : Fragment(), CoroutineScope {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 
 
     override fun onCreateView(
@@ -30,10 +37,16 @@ class HomeFragment : Fragment() {
         //val deals: List<DealItem> = generateDeals()
 
         var deals: List<PromoItem> = listOf()
-        model.getPromos().observe(viewLifecycleOwner, Observer { it ->
+        launch {
+            deals = model.getPromos()
+            dealListView.adapter = StoreListAdapter(deals)
+        }
+            /*.observe(viewLifecycleOwner, Observer { it ->
             deals = it
             dealListView.adapter = StoreListAdapter(deals)
         })
+
+             */
         dealListView.adapter = StoreListAdapter(deals)
         dealListView.layoutManager = LinearLayoutManager(activity)
 
@@ -69,9 +82,9 @@ class HomeFragment : Fragment() {
         inner class StoreViewHolder(val view: View) : RecyclerView.ViewHolder(view),
             View.OnClickListener {
             override fun onClick(view: View?) {
-                if (view != null) {
-
-                }
+                //if (view != null) {
+                    //empty
+                //}
             }
         }
 

@@ -4,4 +4,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="new_user_text"><u>New User?</u></string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="new_username">New Username</string>
+    <string name="new_password">New Password</string>
+    <string name="submit">Submit</string>
+    <string name="default_user_greeting">Hello, User!</string>
+    <string name="default_points_total">You have 500 points!</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="new_user">New User?</string>
+    <string name="promo_name_default">Promo Name</string>
+    <string name="promo_store_default">Promo Store</string>
+    <string name="promo_exp_default">Expiration Date</string>
+    <string name="store_name_default">Store Name</string>
+    <string name="store_description_default">Store Description</string>
 </resources>
